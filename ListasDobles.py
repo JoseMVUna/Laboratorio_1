@@ -48,7 +48,7 @@ class ListaDoblementeEnlazada:
             posicion =+ 1
         return -1 # En caso de que no este en la lista
 
-    def tamano_lista(self):
+    def cantidadElementos(self):
         return self.tamano
 
     def eliminarAlFinal(self):
@@ -61,7 +61,7 @@ class ListaDoblementeEnlazada:
         else:
             self.cola = self.cola.anterior
             self.cola.siguiente = None
-        self.tamaño -= 1
+        self.tamano -= 1
 
     def insertar_final(self,valor):
         nuevo_nodo = Nodo(valor)
@@ -87,9 +87,11 @@ class ListaDoblementeEnlazada:
             self.agregar_inicio(valor)
             return
 
+        
+
         #Si la posicion corresponde al final
         if posicion == self.tamano:
-            self.insertar_final
+            self.insertar_final(valor)
             return
 
         nuevo_nodo = Nodo(valor)
@@ -111,7 +113,7 @@ class ListaDoblementeEnlazada:
         self.tamano += 1
 
     def eliminar_inicio(self):
-        if self.esta_vacia:
+        if self.esta_vacia():
             print("No se puede eliminar en una lista vacia")
             return None
 
@@ -125,12 +127,12 @@ class ListaDoblementeEnlazada:
             self.cabeza = self.cabeza.siguiente
             self.cabeza.anterior = None
 
-        self.tamano += 1
+        self.tamano -= 1
 
         return valor_eliminado
 
     def eliminar_medio(self, posicion):
-        if self.esta_vacia:
+        if self.esta_vacia():
             print("No se puede eliminar en una lista vacia")
             return None
         
@@ -163,19 +165,93 @@ class ListaDoblementeEnlazada:
 
         return valor_eliminado
 
+    def temperaturaMayor(self):
+        if self.esta_vacia():
+            print("No se puede recorrer una lista vacia")
+            return None
+
+        actual = self.cabeza
+        mayor = actual.valor
+        while actual:#actual == true
+            if (actual.valor > mayor):
+                mayor = actual.valor
+            actual = actual.siguiente
+        return mayor
+
+    def temperaturaMenor(self):
+        if self.esta_vacia():
+            print("No se puede recorrer en una lista vacia")
+            return None
         
+        actual = self.cabeza
+        menor = actual.valor
+        while actual:#actual == true
+            if (actual.valor < menor):
+                menor = actual.valor
+            actual = actual.siguiente
+        
+        return menor
+
+    def promedioTemperatura(self):
+        if self.esta_vacia():
+            return 0
+        
+        suma = 0
+        actual = self.cabeza
+
+        while actual:
+            suma += actual.valor
+            actual = actual.siguiente
+
+        return suma / self.tamano
+
+
 
 if __name__ == "__main__":
-    LD = ListaDoblementeEnlazada()
-    LD.agregar_inicio(50)
-    LD.agregar_inicio(40)
-    LD.agregar_inicio(30)
-    LD.agregar_inicio(20)
-    if print(LD.esta_vacia()):
-        print ("La lista esta vacia")
-    else:
-        print ("La lista no esta vacia")
-        LD.agregar_inicio(10)
-        LD.recorrer_adelante()
-        LD.recorrer_atras()
-        LD.buscar(30)
+# Crear la lista doblemente enlazada
+    lista = ListaDoblementeEnlazada()
+    try:
+        with open("datos.txt", "r") as archivo:
+            for linea in archivo:
+                linea = linea.strip()
+                # Evitar líneas vacías
+                if linea != "":
+                    valor = int(linea)
+                    # Insertar el valor en la lista
+                    lista.agregar_inicio(valor)
+                    lista.recorrer_adelante()
+                    print(f"Cantidad de elementos: {lista.cantidadElementos()}")
+            print(f"promedio  {lista.promedioTemperatura()}")
+            lista.temperaturaMayor()
+            lista.temperaturaMenor()
+            with open("Reporte.txt", "w") as archivo:
+                archivo.write("Elaborado por: German Nuñez Mora y Jose Valerio Rodriguez\n\n")
+                archivo.write("====================================\n")
+                archivo.write("    REPORTE DE TEMPERATURAS\n")
+                archivo.write("====================================\n\n")
+                archivo.write(
+                "Cantidad de temperaturas: "
+                + str(lista.cantidadElementos())
+                + "\n"
+                "Temperatura promedio :"
+                + str(lista.promedioTemperatura())
+                + "\n"
+                "Temperatura mayor: "
+                + str(lista.temperaturaMayor())
+                + "\n"
+                "Temperatura menor: "
+                + str(lista.temperaturaMenor())
+                + "\n"
+                
+        )
+
+
+
+
+    except FileNotFoundError:
+        print("Error: el archivo datos.txt no existe.")
+        exit()
+
+    except ValueError:
+        print("Error: el archivo contiene un dato que no es entero.")
+        exit()
